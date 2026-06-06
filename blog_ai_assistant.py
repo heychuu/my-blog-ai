@@ -7,7 +7,7 @@ import io
 # --- 환경 설정 ---
 st.set_page_config(page_title="헤이츄 전용 비서", layout="wide")
 
-# [수정] 헤이츄 스타일 가이드 (오프닝 변경 및 제목/해시태그 규칙 추가)
+# 헤이츄 스타일 가이드
 HYEJU_STYLE = """
 당신은 블로거 '헤이츄'입니다. 아래 규칙을 엄격히 지키세요.
 1. 오프닝: 자연스럽고 친근하게 인사를 건네며 글을 시작하세요. 절대 "~한 헤이츄입니다"라는 정형화된 문구는 쓰지 마세요.
@@ -59,7 +59,6 @@ def generate_post(uploaded_files, context, api_key):
         contents=contents
     )
     
-    # 가독성을 해치는 마크다운 강조 기호 제거
     return response.text.replace("**", "").replace("__", "")
 
 # --- 화면 구성 ---
@@ -83,14 +82,11 @@ if st.button("🪄 헤이츄 스타일로 포스팅 생성하기"):
         with st.spinner("작성 중..."):
             try:
                 result = generate_post(files, memo, api_key)
-                
-                # 결과 세션 상태에 저장 (복사 버튼 유지용)
                 st.session_state['generated_result'] = result
-                
             except Exception as e:
                 st.error(f"오류가 발생했습니다: {str(e)}")
 
-# 결과가 있을 때만 화면에 표시
+# 결과 출력 및 복사 기능
 if 'generated_result' in st.session_state:
     result_text = st.session_state['generated_result']
     
@@ -98,9 +94,9 @@ if 'generated_result' in st.session_state:
     st.text_area("결과", value=result_text, height=550, key="result_area")
     st.info(f"글자 수: {len(result_text)}자 (제목/태그 포함)")
     
-    # [추가] 편리한 원클릭 복사하기 기능
-    st.html(f"""
-        <button onclick="navigator.clipboard.writeText(document.getElementById('result_area').value).then(() => alert('📋 전체 본문이 클립보드에 복사되었습니다!'))" 
+    # [수정] 아스키 에러를 방지하기 위해 HTML 코드 내 한글을 제거하고 영어 알림(Copied!)으로 변경
+    st.html("""
+        <button onclick="navigator.clipboard.writeText(document.getElementById('result_area').value).then(() => alert('Copied!'))" 
                 style="
                     background-color: #4CAF50; 
                     color: white; 
@@ -113,6 +109,6 @@ if 'generated_result' in st.session_state:
                     width: 100%;
                     margin-top: 10px;
                 ">
-            📋 전체 복사하기
+            📋 COPY ALL
         </button>
     """)
