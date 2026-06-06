@@ -91,24 +91,8 @@ if 'generated_result' in st.session_state:
     result_text = st.session_state['generated_result']
     
     st.subheader("📝 완성된 초안 (제목 & 태그 포함)")
-    st.text_area("결과", value=result_text, height=550, key="result_area")
-    st.info(f"글자 수: {len(result_text)}자 (제목/태그 포함)")
     
-    # [수정] 아스키 에러를 방지하기 위해 HTML 코드 내 한글을 제거하고 영어 알림(Copied!)으로 변경
-    st.html("""
-        <button onclick="navigator.clipboard.writeText(document.getElementById('result_area').value).then(() => alert('Copied!'))" 
-                style="
-                    background-color: #4CAF50; 
-                    color: white; 
-                    padding: 12px 24px; 
-                    border: none; 
-                    border-radius: 4px; 
-                    cursor: pointer; 
-                    font-size: 16px; 
-                    font-weight: bold;
-                    width: 100%;
-                    margin-top: 10px;
-                ">
-            📋 COPY ALL
-        </button>
-    """)
+    # [수정] 복사 버그 우회를 위해 Streamlit 내장 code 블록 사용
+    # 이 상자의 우측 상단에 마우스를 올리거나 터치하면 [📋] 복사 버튼이 자동으로 나타납니다!
+    st.code(result_text, language="text", wrap_lines=True)
+    st.info(f"글자 수: {len(result_text)}자 (제목/태그 포함)")
